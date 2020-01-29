@@ -1,69 +1,79 @@
 <?php
 
-abstract class Beatmap
-{
-    /**
-     * @var int $type
-     *
-     * Type of the beatmap, should be one of the value provided by BeatmapTypes
-     */
-    public int $type;
+namespace Blister {
 
-    /**
-     * @var DateTime $dateAdded
-     *
-     * The datetime when the map has been added to the playlist.
-     */
-    public DateTime $dateAdded;
-}
+    use DateTime;
 
-class BeatmapKey extends Beatmap {
-    public int $type = BeatmapTypes::Key;
+    abstract class Beatmap
+    {
+        /**
+         * @var int $type
+         *
+         * Type of the beatmap, should be one of the value provided by BeatmapTypes
+         */
+        public int $type;
 
-    /**
-     * @var int $key
-     *
-     * The key of the beatmap on beatsaver
-     */
-    public int $key;
-}
+        /**
+         * @var DateTime $dateAdded
+         *
+         * The datetime when the map has been added to the playlist.
+         */
+        public DateTime $dateAdded;
+    }
 
-class BeatmapHash extends Beatmap {
-    public int $type = BeatmapTypes::Hash;
+    class BeatmapKey extends Beatmap
+    {
+        public int $type = BeatmapTypes::Key;
 
-    /**
-     * @var string $hash
-     *
-     * The hash of the beatmap
-     */
-    public string $hash;
-}
+        /**
+         * @var int $key
+         *
+         * The key of the beatmap on beatsaver
+         */
+        public int $key;
+    }
 
-class BeatmapZip extends Beatmap {
-    public int $type = BeatmapTypes::Zip;
+    class BeatmapHash extends Beatmap
+    {
+        public int $type = BeatmapTypes::Hash;
 
-    /**
-     * @var string $bytes
-     *
-     * The bytes of the beatmap zip
-     */
-    public string $bytes;
-}
+        /**
+         * @var string $hash
+         *
+         * The hash of the beatmap
+         */
+        public string $hash;
+    }
 
-class BeatmapLevelId extends Beatmap {
-    public int $type = BeatmapTypes::LevelId;
+    class BeatmapZip extends Beatmap
+    {
+        public int $type = BeatmapTypes::Zip;
 
-    /**
-     * @var string $levelId
-     *
-     * The levelId of the beatmap
-     */
-    public string $levelId;
-}
+        /**
+         * @var string $bytes
+         *
+         * The bytes of the beatmap zip
+         */
+        public string $bytes;
+    }
 
-abstract class BeatmapTypes {
-    public const Key = 0;
-    public const Hash = 1;
-    public const Zip = 2;
-    public const LevelId = 3;
+    class BeatmapLevelId extends Beatmap
+    {
+        public int $type = BeatmapTypes::LevelId;
+
+        /**
+         * @var string $levelId
+         *
+         * The levelId of the beatmap
+         */
+        public string $levelId;
+    }
+
+    abstract class BeatmapTypes
+    {
+        public const Key = 0;
+        public const Hash = 1;
+        public const Zip = 2;
+        public const LevelId = 3;
+    }
 }
