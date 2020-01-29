@@ -1,0 +1,12 @@
+{
+    "name": "alaanor/blister-php",
+    "description": "Implementation of blister in php, a playlist handling library for Beat Saber",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alaanor",
+            "email": "max.bonvin@gmail.com"
+        }
+    ],
+    "require": {}
+}
