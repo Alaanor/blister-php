@@ -92,5 +92,30 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/phpstorm
 
+# -------------------------------------------------
+
+# Created by https://www.gitignore.io/api/phpunit
+# Edit at https://www.gitignore.io/?templates=phpunit
+
+### PHPUnit ###
+# Covers PHPUnit
+# Reference: https://phpunit.de/
+
+# Generated files
+.phpunit.result.cache
+
+# PHPUnit
+/app/phpunit.xml
+/phpunit.xml
+
+# Build data
+/build/
+
+# End of https://www.gitignore.io/api/phpunit
+
+# -------------------------------------------------
+
+# Custom
+
 # As recommanded here, ignoring vendor https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies
 vendor/
