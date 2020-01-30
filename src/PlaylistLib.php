@@ -4,7 +4,7 @@ namespace Blister;
 
 class PlaylistLib
 {
-    public string $magicNumber = "Blist.v2";
+    public static string $magicNumber = "Blist.v2";
 
     /**
      * Check if the file has the magic number
@@ -12,9 +12,9 @@ class PlaylistLib
      * @param resource $handler
      * @return bool
      */
-    public function HasMagicNumber($handler): bool
+    public static function HasMagicNumber($handler): bool
     {
         fseek($handler, 0);
-        return fread($handler, strlen($this->magicNumber)) === $this->magicNumber;
+        return fread($handler, strlen(self::$magicNumber)) === self::$magicNumber;
     }
 }
