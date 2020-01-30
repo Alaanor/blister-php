@@ -37,5 +37,5 @@ class Playlist
      *
      * The beatmaps of the playlist
      */
-    public Array $maps;
+    public array $maps;
 }
