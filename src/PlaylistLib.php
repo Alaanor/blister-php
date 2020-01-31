@@ -18,35 +18,55 @@ class PlaylistLib
     /**
      * Check if the file has the magic number
      *
-     * @param resource $handler
+     * @param string $data
      * @return bool
      */
-    public static function HasMagicNumber($handler): bool
+    public static function HasMagicNumber($data): bool
     {
-        fseek($handler, 0);
-        return fread($handler, strlen(self::$magicNumber)) === self::$magicNumber;
+        return substr($data, 0, strlen(self::$magicNumber)) === self::$magicNumber;
     }
 
     /**
-     * Deserialize the resource as a blister playlist
+     * Deserialize the filepath as a blister playlist
      *
      * @param string $filepath
      * @return Playlist
      */
-    public static function Deserialize($filepath): Playlist
+    public static function DeserializePath($filepath): Playlist
     {
-        $handler = fopen($filepath, 'r');
+        $data = file_get_contents($filepath);
+        return self::Deserialize($data);
+    }
 
-        if (!self::HasMagicNumber($handler)) {
+    /**
+     * @param string $data
+     * @return Playlist
+     */
+    public static function Deserialize($data): Playlist
+    {
+        if (!self::HasMagicNumber($data)) {
             throw new InvalidMagicNumber();
         }
 
-        fseek($handler, 0);
-        $data = fread($handler, filesize($filepath));
-        $gzipData = substr($data, strlen(self::$magicNumber));
-        $uncompressed = gzdecode($gzipData);
-        $bson = BSON\toPHP($uncompressed, array());
-        return self::MapToPlaylist($bson);
+        try {
+            $gzipData = substr($data, strlen(self::$magicNumber));
+            $uncompressed = gzdecode($gzipData);
+            $bson = BSON\toPHP($uncompressed, array());
+            return self::MapToPlaylist($bson);
+        } catch (Exception $e) {
+            throw new InvalidPlaylistFormat("Failed to deserialize", 0, $e);
+        }
+    }
+
+    /**
+     * Serialize a playlist object using the blister format
+     *
+     * @param Playlist $playlist
+     * @return string
+     */
+    public static function Serialize(Playlist $playlist): string
+    {
+        return self::$magicNumber . gzencode(BSON\fromPHP($playlist));
     }
 
     /**
@@ -61,7 +81,7 @@ class PlaylistLib
         $playlist->title = $bson->title;
         $playlist->author = $bson->author;
         $playlist->description = $bson->description;
-        $playlist->cover = base64_encode($bson->cover->getData());
+        $playlist->cover = base64_encode((string)$bson->cover);
         $playlist->maps = [];
 
         foreach ($bson->maps as $beatmap) {
@@ -82,7 +102,7 @@ class PlaylistLib
         switch ($bsonBeatmap->type) {
             case BeatmapTypes::Key:
                 $beatmap = new BeatmapKey();
-                $beatmap->key = bin2hex($bsonBeatmap->key);
+                $beatmap->key = dechex($bsonBeatmap->key);
                 break;
             case BeatmapTypes::Hash:
                 $beatmap = new BeatmapHash();
@@ -91,14 +111,17 @@ class PlaylistLib
 
             case BeatmapTypes::Zip:
             case BeatmapTypes::LevelId:
-                throw new UnsupportedBeatmapFormat();
-
             default:
-                throw new Exception('Unexpected value');
+                throw new UnsupportedBeatmapFormat();
         }
 
-        $time = (int)(((int)(string)$bsonBeatmap->dateAdded) / 1000);
-        $beatmap->dateAdded = DateTime::createFromFormat("U", $time);
+        try {
+            $msTimeStamps = (int)(((int)(string)$bsonBeatmap->dateAdded) / 1000);
+            $beatmap->dateAdded = DateTime::createFromFormat("U", $msTimeStamps);
+        } catch (\Exception $e) {
+            print_r($bsonBeatmap);
+            throw new FailedToParseBeatmapDateTime('Failed to parse dateAdded field', 0, $e);
+        }
 
         return $beatmap;
     }
@@ -109,5 +132,13 @@ class InvalidMagicNumber extends Exception
 }
 
 class UnsupportedBeatmapFormat extends Exception
+{
+}
+
+class InvalidPlaylistFormat extends Exception
+{
+}
+
+class FailedToParseBeatmapDateTime extends Exception
 {
 }

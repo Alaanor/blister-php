@@ -2,7 +2,9 @@
 
 namespace Blister\Model;
 
-class Playlist
+use MongoDB\BSON;
+
+class Playlist implements BSON\Serializable
 {
     /**
      * @var string $title
@@ -38,4 +40,18 @@ class Playlist
      * The beatmaps of the playlist
      */
     public array $maps;
+
+    /**
+     * @inheritDoc
+     */
+    public function bsonSerialize()
+    {
+        return [
+            'title' => $this->title,
+            'author' => $this->author,
+            'description' => $this->description,
+            'cover' => $this->cover ? new BSON\Binary(base64_decode($this->cover), BSON\Binary::TYPE_GENERIC) : null,
+            'maps' => $this->maps,
+        ];
+    }
 }
