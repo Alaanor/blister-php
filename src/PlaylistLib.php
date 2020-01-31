@@ -5,7 +5,9 @@ namespace Blister;
 use Blister\Model\Beatmap;
 use Blister\Model\BeatmapHash;
 use Blister\Model\BeatmapKey;
+use Blister\Model\BeatmapLevelId;
 use Blister\Model\BeatmapTypes;
+use Blister\Model\BeatmapZip;
 use Blister\Model\Playlist;
 use PHPUnit\Framework\Exception;
 use MongoDB\BSON;
@@ -110,7 +112,15 @@ class PlaylistLib
                 break;
 
             case BeatmapTypes::Zip:
+                $beatmap = new BeatmapZip();
+                $beatmap->bytes = (string)$bsonBeatmap->bytes;
+                break;
+
             case BeatmapTypes::LevelId:
+                $beatmap = new BeatmapLevelId();
+                $beatmap->levelId = $bsonBeatmap->levelId;
+                break;
+
             default:
                 throw new UnsupportedBeatmapFormat();
         }

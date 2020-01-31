@@ -10,7 +10,6 @@ The reason of this dependency is that the blister format use [BSON](http://bsons
 ## Limitation
 
 - Unlike the implementation made by the author himself, I won't support the conversion from the legacy playlist model.
-- No support for Zip/LevelId.
 - Datetime precision is in seconds.
 
 And of course, any PR to make changes is welcomed.
