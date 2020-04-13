@@ -1,3 +1,5 @@
+**Archived** the format has never been fully released, depreciated in favor of blist.
+
 # Blister-php
 
 A PHP implementation of the blister library accordingly to the [SPEC.md](https://github.com/lolPants/Blister/blob/master/SPEC.md)
